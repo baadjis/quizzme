@@ -11,7 +11,7 @@ import { GlobalStyle, Wrapper } from './App.styles';
 export type AnswerObject = {
   question: string;
   answer: string;
-  correct: boolean;
+  isCorrect: boolean;
   correctAnswer: string;
 };
 
@@ -56,7 +56,7 @@ const App: React.FC = () => {
       const answerObject = {
         question: questions[current].question,
         answer,
-        correct,
+        isCorrect:correct,
         correctAnswer: questions[current].correct_answer,
       };
       setUserAnswers((prev) => [...prev, answerObject]);

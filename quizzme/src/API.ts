@@ -1,4 +1,4 @@
-import { shuffleArray } from './utils';
+import { shuffleQuestions } from './utils';
 
 export type Question = {
   category: string;
@@ -16,6 +16,6 @@ export const getQuestions = async (amount: number, level: string): Promise<Quest
   const data = await (await fetch(url)).json();
   return data.results.map((question: Question) => ({
     ...question,
-    answers: shuffleArray([...question.incorrect_answers, question.correct_answer])
+    answers: shuffleQuestions([...question.incorrect_answers, question.correct_answer])
   }))
 };
