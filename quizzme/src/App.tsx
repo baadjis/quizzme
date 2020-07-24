@@ -8,6 +8,8 @@ import { QuestionsState} from './API';
 // Styles
 import { GlobalStyle, Wrapper } from './App.styles';
 
+import {dateFormat} from './utils'
+
 export type AnswerObject = {
   question: string;
   answer: string;
@@ -16,6 +18,7 @@ export type AnswerObject = {
 };
 
 const Number_Questions = 10;
+var timeout:number;
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -25,10 +28,23 @@ const App: React.FC = () => {
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
   const [score, setScore] = useState(0);
   const [end, setEnd] = useState(true);
+  const [duration , setDuration] = useState(0);
 
+ 
+  function calculateDuration(){
+    setDuration((prev) => prev + 1);
+
+  }
+  function stopTimer(){
+    window.clearInterval(timeout);
+    console.log('stopped')
+  }
+  end && stopTimer()
   const onStart= async () => {
     setLoading(true);
     setEnd(false);
+    
+    timeout = window.setInterval(calculateDuration,1000)
     const newQuestions = await getQuestions(
       Number_Questions,
       level
@@ -61,27 +77,36 @@ const App: React.FC = () => {
       };
       setUserAnswers((prev) => [...prev, answerObject]);
     }
+    if (current +1 === Number_Questions){
+      stopTimer();
+    }
+    
   };
 
   const goNext = () => {
     // Move on to the next question if not the last question
     const next = current + 1;
-
+    console.log(next)
     if (next=== Number_Questions) {
+  
       setEnd(true);
+      end && stopTimer()
     } else {
       setCurrent(next);
+     console.log(next)
     }
   };
-
+  
   return (
+   
     <>
       <Logo />
       <GlobalStyle />
        
       <Wrapper>
-
         <h1>Level:{level}</h1>
+        <h3>time: {dateFormat(duration)}</h3>
+
         <label>Choose a level:</label>
             <select name="level" id="level" onChange={changeLevel}>
               <option value="easy">Easy</option>
@@ -89,6 +114,7 @@ const App: React.FC = () => {
               <option value="hard">Hard</option>
             </select>
         {end || userAnswers.length === Number_Questions ? (
+         
           <button className='start' onClick={onStart}>
             Start
           </button>
